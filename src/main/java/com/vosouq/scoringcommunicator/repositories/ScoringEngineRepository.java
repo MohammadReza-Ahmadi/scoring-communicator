@@ -2,6 +2,7 @@ package com.vosouq.scoringcommunicator.repositories;
 
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.*;
 import com.vosouq.scoringcommunicator.controllers.dtos.res.*;
+import com.vosouq.scoringcommunicator.controllers.dtos.res.ScoreChangeRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,16 +16,16 @@ public interface ScoringEngineRepository {
     List<ScoreGaugeRaw> getScoreGauges();
 
     @GetMapping(value = "/score-boundaries")
-    ScoreBoundariesRes getScoreBoundaries();
+    ScoreBoundariesRaw getScoreBoundaries();
 
     @GetMapping(value = "/score-status/{userId}")
     ScoreStatusRaw getScoreStatus(@PathVariable(value = "userId") Long userId);
 
     @GetMapping(value = "/vosouq-status/{userId}")
-    VosouqStatusRes getVosouqStatus(@PathVariable(value = "userId") Long userId);
+    VosouqStatusRaw getVosouqStatus(@PathVariable(value = "userId") Long userId);
 
     @GetMapping(value = "/loans-status/{userId}")
-    LoansStatusRes getLoansStatus(@PathVariable(value = "userId") Long userId);
+    LoansStatusRaw getLoansStatus(@PathVariable(value = "userId") Long userId);
 
     @GetMapping(value = "/cheques-status/{userId}")
     ChequesStatusRaw getChequesStatus(@PathVariable(value = "userId") Long userId);
@@ -32,12 +33,12 @@ public interface ScoringEngineRepository {
     @GetMapping(value = "/score-distributions")
     List<ScoreDistributionRaw> getScoreDistributions();
 
-    @GetMapping(value = "/score-time-series/{userId}/month-filter/{monthFilter}")
-    List<ScoreTimeSeriesRes> getScoreTimeSeries(@PathVariable(value = "userId") Long userId, @PathVariable(value = "monthFilter") Integer monthFilter);
+    @GetMapping(value = "/score-time-series/{userId}/filter/{numberOfDays}")
+    List<ScoreTimeSeriesRaw> getScoreTimeSeries(@PathVariable(value = "userId") Long userId, @PathVariable(value = "numberOfDays") Integer numberOfDays);
 
     @GetMapping(value = "/score-details/{userId}")
     ScoreDetailsRaw getScoreDetails(@PathVariable(value = "userId") Long userId);
 
     @GetMapping(value = "/score-changes/{userId}")
-    List<ScoreChangeRes> getScoreChanges(@PathVariable(value = "userId") Long userId);
+    List<ScoreChangeRaw> getScoreChanges(@PathVariable(value = "userId") Long userId);
 }

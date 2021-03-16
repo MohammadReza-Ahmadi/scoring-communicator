@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.vosouq.scoringcommunicator.infrastructures.Constants.THREE_INT;
+import static com.vosouq.scoringcommunicator.infrastructures.Constants.*;
 
 @Service
 public class CreditStatusServiceImpl implements CreditStatusService {
@@ -41,26 +41,29 @@ public class CreditStatusServiceImpl implements CreditStatusService {
     @Override
     public ScoreStatusRes getScoreStatus(Long userId) {
         validateUserAccess(userId);
-        ScoreStatusRaw scoreStatusRaw = scoringEngineRepository.getScoreStatus(userId);
-        scoreStatusRaw.setOtherUserProfile(userProfileRepositoryMOC.getUserProfile(userId));
+        ScoreStatusRaw raw = scoringEngineRepository.getScoreStatus(userId);
+        raw.setOtherUserProfile(userProfileRepositoryMOC.getUserProfile(userId));
         return new ScoreStatusRes(
-                scoreStatusRaw.getOtherUserProfile(),
-                scoreStatusRaw.getScore(),
-                scoreStatusRaw.getLastScoreChange(),
-                scoreStatusRaw.getLastUpdateDate(),
-                scoreStatusRaw.getScoreGaugeRaws().stream().map(r -> new ScoreGaugeRes(r.getStart(), r.getEnd(), r.getTitle(), r.getColor(), r.getRiskStatus())).collect(Collectors.toList()));
+                raw.getOtherUserProfile(),
+                raw.getScore(),
+                raw.getMaxScore(),
+                raw.getLastScoreChange(),
+                raw.getLastUpdateDate(),
+                raw.getScoreGaugeRaws().stream().map(r -> new ScoreGaugeRes((r.getStart() > ZERO_INT ? r.getStart() - ONE_INT : r.getStart()), r.getEnd(), r.getTitle(), r.getColor())).collect(Collectors.toList()));
     }
 
     @Override
     public VosouqStatusRes getVosouqStatus(Long userId) {
         validateUserAccess(userId);
-        return scoringEngineRepository.getVosouqStatus(userId);
+        VosouqStatusRaw raw = scoringEngineRepository.getVosouqStatus(userId);
+        return new VosouqStatusRes(raw.getMembershipDurationDay(), raw.getMembershipDurationMonth(), raw.getDoneTradesCount(), raw.getUndoneTradesCount(), raw.getNegativeStatusCount(), raw.getDelayDaysCountAvg(), raw.getRecommendToOthersCount());
     }
 
     @Override
     public LoansStatusRes getLoansStatus(Long userId) {
         validateUserAccess(userId);
-        return scoringEngineRepository.getLoansStatus(userId);
+        LoansStatusRaw raw = scoringEngineRepository.getLoansStatus(userId);
+        return new LoansStatusRes(raw.getCurrentLoansCount(), raw.getPastDueLoansAmount(), raw.getArrearsLoansAmount(), raw.getSuspiciousLoansAmount());
     }
 
     @Override
@@ -87,9 +90,10 @@ public class CreditStatusServiceImpl implements CreditStatusService {
     }
 
     @Override
-    public List<ScoreTimeSeriesRes> getScoreTimeSeries(Long userId, Integer monthFilter) {
+    public List<ScoreTimeSeriesRes> getScoreTimeSeries(Long userId, Integer numberOfDays) {
         validateUserAccess(userId);
-        return scoringEngineRepository.getScoreTimeSeries(userId, monthFilter);
+        List<ScoreTimeSeriesRaw> raws = scoringEngineRepository.getScoreTimeSeries(userId, numberOfDays);
+        return raws.stream().map(r -> new ScoreTimeSeriesRes(r.getScore_date(), r.getScore())).collect(Collectors.toList());
     }
 
     @Override
@@ -100,25 +104,25 @@ public class CreditStatusServiceImpl implements CreditStatusService {
         scoreDetailsRes.setDetails(new ArrayList<>());
 
         // load data from scoring-engine
-        List<ScoreGaugeRaw> scoreGaugeRes = scoringEngineRepository.getScoreGauges();
-        ScoreBoundariesRes scoreBoundariesRes = scoringEngineRepository.getScoreBoundaries();
+        List<ScoreGaugeRaw> scoreGauges = scoringEngineRepository.getScoreGauges();
+        ScoreBoundariesRaw scoreBoundariesRaw = scoringEngineRepository.getScoreBoundaries();
         ScoreDetailsRaw scoreDetailsRaw = scoringEngineRepository.getScoreDetails(userId);
 
         // set chartItems
         List<ScoreDistributionRaw> scoreDistributionRaws = scoringEngineRepository.getScoreDistributions();
         for (ScoreDistributionRaw sdr : scoreDistributionRaws) {
-            String color = resolveChartItemColor(scoreGaugeRes, sdr.getFromScore(), sdr.getToScore(), scoreDetailsRaw.getScore());
+            String color = resolveChartItemColor(scoreGauges, sdr.getFromScore(), sdr.getToScore(), scoreDetailsRaw.getScore());
             scoreDetailsRes.addNewChartItem(sdr.getFromScore(), sdr.getToScore(), color);
         }
 
         // set Details
-        scoreDetailsRes.addNewDetail(messages.get("ScoreDetailsRes.Detail.title.identities"), scoreDetailsRaw.getIdentitiesScore(), scoreBoundariesRes.getIdentitiesMaxScore());
-        scoreDetailsRes.addNewDetail(messages.get("ScoreDetailsRes.Detail.title.histories"), scoreDetailsRaw.getHistoriesScore(), scoreBoundariesRes.getHistoriesMaxScore());
-        scoreDetailsRes.addNewDetail(messages.get("ScoreDetailsRes.Detail.title.volumes"), scoreDetailsRaw.getVolumesScore(), scoreBoundariesRes.getVolumesMaxScore());
-        scoreDetailsRes.addNewDetail(messages.get("ScoreDetailsRes.Detail.title.timeliness"), scoreDetailsRaw.getTimelinessScore(), scoreBoundariesRes.getTimelinessMaxScore());
+        scoreDetailsRes.addNewDetail(messages.get("ScoreDetailsRes.Detail.title.identities"), scoreDetailsRaw.getIdentitiesScore(), scoreBoundariesRaw.getIdentitiesMaxScore());
+        scoreDetailsRes.addNewDetail(messages.get("ScoreDetailsRes.Detail.title.histories"), scoreDetailsRaw.getHistoriesScore(), scoreBoundariesRaw.getHistoriesMaxScore());
+        scoreDetailsRes.addNewDetail(messages.get("ScoreDetailsRes.Detail.title.volumes"), scoreDetailsRaw.getVolumesScore(), scoreBoundariesRaw.getVolumesMaxScore());
+        scoreDetailsRes.addNewDetail(messages.get("ScoreDetailsRes.Detail.title.timeliness"), scoreDetailsRaw.getTimelinessScore(), scoreBoundariesRaw.getTimelinessMaxScore());
 
         // set Percentile
-        int level = (scoreDetailsRaw.getScore() * percentileTotal) / scoreBoundariesRes.getMaxScore();
+        int level = (scoreDetailsRaw.getScore() * percentileTotal) / scoreBoundariesRaw.getMaxScore();
         scoreDetailsRes.setPercentileData(percentileTotal, level);
         return scoreDetailsRes;
     }
@@ -126,7 +130,8 @@ public class CreditStatusServiceImpl implements CreditStatusService {
     @Override
     public List<ScoreChangeRes> getScoreChanges(Long userId) {
         validateUserAccess(userId);
-        return scoringEngineRepository.getScoreChanges(userId);
+        List<ScoreChangeRaw> raws = scoringEngineRepository.getScoreChanges(userId);
+        return raws.stream().map(r -> new ScoreChangeRes(r.getChangeReason(), r.getChangeDate(), r.getScoreChange())).collect(Collectors.toList());
     }
 
     private void validateUserAccess(Long userId) {

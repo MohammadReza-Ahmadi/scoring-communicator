@@ -1,5 +1,6 @@
-package com.vosouq.scoringcommunicator.controllers.dtos.res;
+package com.vosouq.scoringcommunicator.controllers.dtos.raws;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,13 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ScoreChangeRes {
+public class ScoreChangeRaw {
+    @JsonProperty("change_reason")
     private String changeReason;
+
+    @JsonProperty("change_date")
     private Date changeDate;
+
+    @JsonProperty("score_change")
     private Integer scoreChange;
 }

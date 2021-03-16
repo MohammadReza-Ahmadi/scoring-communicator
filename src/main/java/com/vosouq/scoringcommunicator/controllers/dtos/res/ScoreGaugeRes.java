@@ -15,5 +15,4 @@ public class ScoreGaugeRes {
     private Integer end;
     private String title;
     private String color;
-    private String riskStatus;
 }

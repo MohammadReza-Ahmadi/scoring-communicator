@@ -2,6 +2,7 @@ package com.vosouq.scoringcommunicator.controllers.demo;
 
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.ScoreGaugeRaw;
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.ScoreStatusRaw;
+import com.vosouq.scoringcommunicator.controllers.dtos.raws.VosouqStatusRaw;
 import com.vosouq.scoringcommunicator.controllers.dtos.res.*;
 import com.vosouq.scoringcommunicator.services.impl.CredentialCheckRequestServiceImpl;
 import com.vosouq.scoringcommunicator.repositories.ScoringEngineRepository;
@@ -63,8 +64,8 @@ public class CreditStatusControllerDEMO {
     }
 
     @GetMapping(value = {"/vosouqs", "/vosouqs/{userId}"})
-    public VosouqStatusRes getVosouqStatuses(@PathVariable(required = false) Long userId) {
-        VosouqStatusRes vsr = new VosouqStatusRes();
+    public VosouqStatusRaw getVosouqStatuses(@PathVariable(required = false) Long userId) {
+        VosouqStatusRaw vsr = new VosouqStatusRaw();
         vsr.setMembershipDurationDay(11);
         vsr.setMembershipDurationMonth(4);
         vsr.setDoneTradesCount(12);
@@ -77,8 +78,8 @@ public class CreditStatusControllerDEMO {
 
 
     @GetMapping(value = {"/loans", "/loans/{userId}"})
-    public LoansStatusRes getLoanStatuses(@PathVariable(required = false) Long userId) {
-        LoansStatusRes lsr = new LoansStatusRes();
+    public LoansStatusRaw getLoanStatuses(@PathVariable(required = false) Long userId) {
+        LoansStatusRaw lsr = new LoansStatusRaw();
 //        lsr.setCurrentLoansCount(3);
 //        lsr.setPastDueLoansAmount(2);
 //        lsr.setArrearsLoansAmount(1);

@@ -10,16 +10,16 @@ import java.util.Locale;
 @Component
 public class Messages {
 
-    private final MessageSource messageSource;
+    private final MessageSource creditMessageSource;
     private MessageSourceAccessor accessor;
 
-    public Messages(MessageSource messageSource) {
-        this.messageSource = messageSource;
+    public Messages(MessageSource creditMessageSource) {
+        this.creditMessageSource = creditMessageSource;
     }
 
     @PostConstruct
     private void init() {
-        accessor = new MessageSourceAccessor(messageSource, new Locale(Constants.LOCALE_FA));
+        accessor = new MessageSourceAccessor(creditMessageSource, new Locale(Constants.LOCALE_FA));
     }
 
     public String get(String code) {

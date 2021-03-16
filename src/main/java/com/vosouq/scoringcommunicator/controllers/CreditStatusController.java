@@ -1,17 +1,19 @@
 package com.vosouq.scoringcommunicator.controllers;
 
 import com.vosouq.commons.annotation.VosouqRestController;
+import com.vosouq.scoringcommunicator.controllers.dtos.raws.LoansStatusRes;
 import com.vosouq.scoringcommunicator.controllers.dtos.res.*;
 import com.vosouq.scoringcommunicator.services.CreditStatusService;
 import com.vosouq.scoringcommunicator.services.UserBusinessService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-//@RestController
-@VosouqRestController
+@RestController
+//@VosouqRestController
 @RequestMapping(value = "/credit-status")
 public class CreditStatusController {
 
@@ -24,12 +26,12 @@ public class CreditStatusController {
     }
 
     /**
-     * @param otherUserId : other userId
+     * @param userId : other userId
      * @return
      */
-    @GetMapping(value = {"", "/{otherUserId}"})
-    public ScoreStatusRes getScoreStatuses(@PathVariable(required = false) Long otherUserId) {
-        Long userId = userBusinessService.resolveUserId(otherUserId);
+    @GetMapping(value = {"", "/{userId}"})
+    public ScoreStatusRes getScoreStatuses(@PathVariable(required = false) Long userId) {
+        userId = userBusinessService.resolveUserId(userId);
         return creditStatusService.getScoreStatus(userId);
     }
 
@@ -51,10 +53,10 @@ public class CreditStatusController {
         return creditStatusService.getChequesStatuses(userId);
     }
 
-    @GetMapping(value = {"/time-series/month-filter/{monthFilter}", "/time-series/{userId}/month-filter/{monthFilter}"})
-    public List<ScoreTimeSeriesRes> getScoreTimeSeries(@PathVariable(required = false) Long userId, @PathVariable Integer monthFilter) {
+    @GetMapping(value = {"/time-series/filter/{numberOfDays}", "/time-series/{userId}/filter/{numberOfDays}"})
+    public List<ScoreTimeSeriesRes> getScoreTimeSeries(@PathVariable(required = false) Long userId, @PathVariable Integer numberOfDays) {
         userId = userBusinessService.resolveUserId(userId);
-        return creditStatusService.getScoreTimeSeries(userId, monthFilter);
+        return creditStatusService.getScoreTimeSeries(userId, numberOfDays);
     }
 
     @GetMapping(value = {"/details", "/details/{userId}"})

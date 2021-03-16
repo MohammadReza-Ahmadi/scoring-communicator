@@ -1,6 +1,7 @@
 package com.vosouq.scoringcommunicator.controllers.dtos.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.ScoreGaugeRaw;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class ScoreStatusRes {
 
     private UserProfileRes otherUserProfile;
     private Integer currentScore;
+    private Integer maxScore;
     private Integer lastScoreChange;
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date lastUpdateDate;

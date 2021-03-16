@@ -22,6 +22,9 @@ public class ScoreStatusRaw {
     @JsonProperty("score")
     private Integer score;
 
+    @JsonProperty("max_score")
+    private Integer maxScore;
+
     @JsonProperty("last_score_change")
     private Integer lastScoreChange;
 

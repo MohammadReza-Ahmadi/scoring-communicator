@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.vosouq</groupId>
-    <artifactId>credit-scoring</artifactId>
+    <artifactId>scoring-communicator</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>

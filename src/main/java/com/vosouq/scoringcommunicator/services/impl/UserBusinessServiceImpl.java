@@ -12,12 +12,17 @@ import static com.vosouq.scoringcommunicator.infrastructures.utils.CreditScoring
 @Service
 public class UserBusinessServiceImpl implements UserBusinessService {
 
-    //    private final OnlineUser onlineUser;
+    private final OnlineUser onlineUser;
     //todo: DEMO
-    private final OnlineUser onlineUser = new OnlineUser();
+//    private final OnlineUser onlineUser = new OnlineUser();
 
     @Value("${app.run.mode.local}")
     private boolean isLocalRun;
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    public UserBusinessServiceImpl(OnlineUser onlineUser) {
+        this.onlineUser = onlineUser;
+    }
 
     //todo: DEMO
 //    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")

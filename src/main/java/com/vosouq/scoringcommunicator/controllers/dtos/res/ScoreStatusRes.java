@@ -20,7 +20,7 @@ public class ScoreStatusRes {
     private UserProfileRes otherUserProfile;
     private Integer currentScore;
     private Integer maxScore;
-    private Integer lastScoreChange;
+    private Integer scoreChange;
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date lastUpdateDate;
     private List<ScoreGaugeRes> ranges;

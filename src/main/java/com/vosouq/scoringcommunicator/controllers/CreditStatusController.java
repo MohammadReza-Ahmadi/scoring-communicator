@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
-//@VosouqRestController
+//@RestController
+@VosouqRestController
 @RequestMapping(value = "/credit-status")
 public class CreditStatusController {
 

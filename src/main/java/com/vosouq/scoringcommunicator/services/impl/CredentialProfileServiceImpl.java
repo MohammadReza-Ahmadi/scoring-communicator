@@ -1,6 +1,7 @@
 package com.vosouq.scoringcommunicator.services.impl;
 
 import com.vosouq.scoringcommunicator.infrastructures.Constants;
+import com.vosouq.scoringcommunicator.infrastructures.exceptions.CredentialProfileAlreadyExistException;
 import com.vosouq.scoringcommunicator.infrastructures.exceptions.CredentialProfileNotFoundException;
 import com.vosouq.scoringcommunicator.infrastructures.utils.CreditScoringUtil;
 import com.vosouq.scoringcommunicator.models.CredentialProfile;
@@ -24,6 +25,8 @@ public class CredentialProfileServiceImpl implements CredentialProfileService {
 
     @Override
     public void create() {
+        if(CreditScoringUtil.isNotNull(findByUserId(userBusinessService.getOnlineUserId())))
+            throw new CredentialProfileAlreadyExistException();
         collection.save(new CredentialProfile(userBusinessService.getOnlineUserId(), Constants.ZERO_INT));
     }
 
@@ -40,8 +43,7 @@ public class CredentialProfileServiceImpl implements CredentialProfileService {
 
     @Override
     public CredentialProfile findByUserId(Long userId, boolean nullSafe) {
-        CredentialProfile profile = collection.findOne("{" + CredentialProfile.Fields.userId.name() + ": #}", userId)
-                .as(CredentialProfile.class);
+        CredentialProfile profile = collection.findOne("{" + CredentialProfile.Fields.userId.name() + ": #}", userId).as(CredentialProfile.class);
         if (nullSafe && CreditScoringUtil.isNull(profile))
             throw new CredentialProfileNotFoundException();
         return profile;

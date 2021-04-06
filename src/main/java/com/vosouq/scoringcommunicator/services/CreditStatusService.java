@@ -8,13 +8,15 @@ import java.util.List;
 
 public interface CreditStatusService {
 
+    List<ScoreReportRes> getScoreReport(@PathVariable Long userId);
+
     ScoreStatusRes getScoreStatus(@PathVariable Long userId);
 
     VosouqStatusRes getVosouqStatus(Long userId);
 
     LoansStatusRes getLoansStatus(Long userId);
 
-    List<ChequesStatusRes> getChequesStatuses(Long userId);
+    List<ChequesStatusRes> getChequesStatus(Long userId);
 
     List<ScoreTimeSeriesRes> getScoreTimeSeries(Long userId, Integer numberOfDays);
 

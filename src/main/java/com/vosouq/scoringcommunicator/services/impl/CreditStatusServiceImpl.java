@@ -3,6 +3,7 @@ package com.vosouq.scoringcommunicator.services.impl;
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.*;
 import com.vosouq.scoringcommunicator.controllers.dtos.res.*;
 import com.vosouq.scoringcommunicator.infrastructures.Messages;
+import com.vosouq.scoringcommunicator.models.UnitType;
 import com.vosouq.scoringcommunicator.repositories.ScoringEngineRepository;
 import com.vosouq.scoringcommunicator.repositories.UserProfileRepositoryMOC;
 import com.vosouq.scoringcommunicator.services.CreditStatusService;
@@ -11,6 +12,7 @@ import com.vosouq.scoringcommunicator.services.ValidationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +38,26 @@ public class CreditStatusServiceImpl implements CreditStatusService {
         this.userBusinessService = userBusinessService;
         this.messages = messages;
         this.userProfileRepositoryMOC = userProfileRepositoryMOC;
+    }
+
+    @Override
+    public List<ScoreReportRes> getScoreReport(Long userId) {
+        VosouqStatusRaw vsqRaw = scoringEngineRepository.getVosouqStatus(userId);
+        ChequesStatusRaw chqRaw = scoringEngineRepository.getChequesStatus(userId);
+        LoansStatusRaw lnRaw = scoringEngineRepository.getLoansStatus(userId);
+        boolean vsqNegStatus = vsqRaw.getNegativeStatusCount() > ZERO_INT;
+        boolean chqNegStatus = chqRaw.getUnfixedReturnedChequesTotalBalance() > ZERO_INT;
+        boolean lnNegStatus = lnRaw.getPastDueLoansAmount().add(lnRaw.getArrearsLoansAmount()).add(lnRaw.getSuspiciousLoansAmount()).compareTo(BigDecimal.ZERO) > ZERO_INT;
+        return List.of(
+                new ScoreReportRes(messages.get("ScoreReportRes.membershipDuration.title"), vsqRaw.getMembershipDurationMonth().toString(), messages.getUnitTitle(UnitType.MONTH)),
+                new ScoreReportRes(messages.get("ScoreReportRes.doneTrades.title"), vsqRaw.getDoneTradesCount().toString(), messages.getUnitTitle(UnitType.NUMBER)),
+                new ScoreReportRes(messages.get("ScoreReportRes.undoneTrades.title"), vsqRaw.getUndoneTradesCount().toString(), messages.getUnitTitle(UnitType.NUMBER)),
+                new ScoreReportRes(messages.get("ScoreReportRes.negativeStatus.title"), messages.getHavingTitle(vsqNegStatus)),
+                new ScoreReportRes(messages.get("ScoreReportRes.delayAvg.title"), vsqRaw.getDelayDaysCountAvg().toString(), messages.getUnitTitle(UnitType.NUMBER)),
+                new ScoreReportRes(messages.get("ScoreReportRes.recommendToOthers.title"), vsqRaw.getRecommendToOthersCount().toString(), messages.getUnitTitle(UnitType.NUMBER)),
+                new ScoreReportRes(messages.get("ScoreReportRes.unfixedReturnedCheque.title"), messages.getHavingTitle(chqNegStatus)),
+                new ScoreReportRes(messages.get("ScoreReportRes.loansWithNegativeStatus.title"), messages.getHavingTitle(lnNegStatus))
+        );
     }
 
     @Override
@@ -67,7 +89,7 @@ public class CreditStatusServiceImpl implements CreditStatusService {
     }
 
     @Override
-    public List<ChequesStatusRes> getChequesStatuses(Long userId) {
+    public List<ChequesStatusRes> getChequesStatus(Long userId) {
         validateUserAccess(userId);
         ChequesStatusRaw raw = scoringEngineRepository.getChequesStatus(userId);
         List<ChequesStatusRes> resList = new ArrayList<>(THREE_INT);

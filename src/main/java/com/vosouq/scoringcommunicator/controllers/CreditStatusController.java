@@ -8,7 +8,6 @@ import com.vosouq.scoringcommunicator.services.UserBusinessService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -25,18 +24,23 @@ public class CreditStatusController {
         this.creditStatusService = creditStatusService;
     }
 
+    @GetMapping(value = {"/report/{userId}"})
+    public List<ScoreReportRes> getScoreReport(@PathVariable Long userId) {
+        return creditStatusService.getScoreReport(userId);
+    }
+
     /**
      * @param userId : other userId
      * @return
      */
     @GetMapping(value = {"", "/{userId}"})
-    public ScoreStatusRes getScoreStatuses(@PathVariable(required = false) Long userId) {
+    public ScoreStatusRes getScoreStatus(@PathVariable(required = false) Long userId) {
         userId = userBusinessService.resolveUserId(userId);
         return creditStatusService.getScoreStatus(userId);
     }
 
     @GetMapping(value = {"/vosouq", "/vosouq/{userId}"})
-    public VosouqStatusRes getVosouqStatuses(@PathVariable(required = false) Long userId) {
+    public VosouqStatusRes getVosouqStatus(@PathVariable(required = false) Long userId) {
         userId = userBusinessService.resolveUserId(userId);
         return creditStatusService.getVosouqStatus(userId);
     }
@@ -50,7 +54,7 @@ public class CreditStatusController {
     @GetMapping(value = {"/cheques", "/cheques/{userId}"})
     public List<ChequesStatusRes> getChequesStatus(@PathVariable(required = false) Long userId) {
         userId = userBusinessService.resolveUserId(userId);
-        return creditStatusService.getChequesStatuses(userId);
+        return creditStatusService.getChequesStatus(userId);
     }
 
     @GetMapping(value = {"/time-series/filter/{numberOfDays}", "/time-series/{userId}/filter/{numberOfDays}"})

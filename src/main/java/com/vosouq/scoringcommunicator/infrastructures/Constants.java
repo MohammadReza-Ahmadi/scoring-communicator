@@ -5,8 +5,12 @@ import java.math.BigDecimal;
 public final class Constants {
     public final static String UTF8 = "UTF-8";
     public final static String LOCALE_FA = "fa";
+    public final static String UNIT = "unit";
+    public final static String VALUE_DOT_HAS = "value.has";
+    public final static String VALUE_DOT_HAS_NOT = "value.hasNot";
     public final static String HASHTAG = "#";
     public final static String DOLOR_SET = "$set";
+    public final static String DOT = ".";
     public final static String SEMICOLON = ":";
     public final static String COMMA = ",";
     public final static String BRACE_OPEN = "{";

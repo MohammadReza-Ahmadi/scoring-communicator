@@ -1,7 +1,7 @@
 package com.vosouq.scoringcommunicator.controllers;
 
 import com.vosouq.commons.annotation.VosouqRestController;
-import com.vosouq.scoringcommunicator.controllers.dtos.raws.LoansStatusRes;
+import com.vosouq.scoringcommunicator.controllers.dtos.res.LoansStatusRes;
 import com.vosouq.scoringcommunicator.controllers.dtos.res.*;
 import com.vosouq.scoringcommunicator.services.CreditStatusService;
 import com.vosouq.scoringcommunicator.services.UserBusinessService;
@@ -24,11 +24,6 @@ public class CreditStatusController {
         this.creditStatusService = creditStatusService;
     }
 
-    @GetMapping(value = {"/report/{userId}"})
-    public List<ScoreReportRes> getScoreReport(@PathVariable Long userId) {
-        return creditStatusService.getScoreReport(userId);
-    }
-
     /**
      * @param userId : other userId
      * @return
@@ -40,9 +35,14 @@ public class CreditStatusController {
     }
 
     @GetMapping(value = {"/vosouq", "/vosouq/{userId}"})
-    public VosouqStatusRes getVosouqStatus(@PathVariable(required = false) Long userId) {
+    public List<TripleRes> getVosouqStatus(@PathVariable(required = false) Long userId) {
         userId = userBusinessService.resolveUserId(userId);
         return creditStatusService.getVosouqStatus(userId);
+    }
+
+    @GetMapping(value = {"/report/{userId}"})
+    public List<TripleRes> getScoreReport(@PathVariable Long userId) {
+        return creditStatusService.getScoreReport(userId);
     }
 
     @GetMapping(value = {"/loans", "/loans/{userId}"})

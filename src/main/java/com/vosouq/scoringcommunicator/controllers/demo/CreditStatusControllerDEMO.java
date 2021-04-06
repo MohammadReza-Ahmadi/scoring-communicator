@@ -1,5 +1,6 @@
 package com.vosouq.scoringcommunicator.controllers.demo;
 
+import com.vosouq.scoringcommunicator.controllers.dtos.raws.LoansStatusRaw;
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.ScoreGaugeRaw;
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.ScoreStatusRaw;
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.VosouqStatusRaw;

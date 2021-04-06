@@ -1,4 +1,4 @@
-package com.vosouq.scoringcommunicator.controllers.dtos.res;
+package com.vosouq.scoringcommunicator.controllers.dtos.raws;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

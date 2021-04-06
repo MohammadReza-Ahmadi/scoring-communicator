@@ -41,26 +41,6 @@ public class CreditStatusServiceImpl implements CreditStatusService {
     }
 
     @Override
-    public List<ScoreReportRes> getScoreReport(Long userId) {
-        VosouqStatusRaw vsqRaw = scoringEngineRepository.getVosouqStatus(userId);
-        ChequesStatusRaw chqRaw = scoringEngineRepository.getChequesStatus(userId);
-        LoansStatusRaw lnRaw = scoringEngineRepository.getLoansStatus(userId);
-        boolean vsqNegStatus = vsqRaw.getNegativeStatusCount() > ZERO_INT;
-        boolean chqNegStatus = chqRaw.getUnfixedReturnedChequesTotalBalance() > ZERO_INT;
-        boolean lnNegStatus = lnRaw.getPastDueLoansAmount().add(lnRaw.getArrearsLoansAmount()).add(lnRaw.getSuspiciousLoansAmount()).compareTo(BigDecimal.ZERO) > ZERO_INT;
-        return List.of(
-                new ScoreReportRes(messages.get("ScoreReportRes.membershipDuration.title"), vsqRaw.getMembershipDurationMonth().toString(), messages.getUnitTitle(UnitType.MONTH)),
-                new ScoreReportRes(messages.get("ScoreReportRes.doneTrades.title"), vsqRaw.getDoneTradesCount().toString(), messages.getUnitTitle(UnitType.NUMBER)),
-                new ScoreReportRes(messages.get("ScoreReportRes.undoneTrades.title"), vsqRaw.getUndoneTradesCount().toString(), messages.getUnitTitle(UnitType.NUMBER)),
-                new ScoreReportRes(messages.get("ScoreReportRes.negativeStatus.title"), messages.getHavingTitle(vsqNegStatus)),
-                new ScoreReportRes(messages.get("ScoreReportRes.delayAvg.title"), vsqRaw.getDelayDaysCountAvg().toString(), messages.getUnitTitle(UnitType.NUMBER)),
-                new ScoreReportRes(messages.get("ScoreReportRes.recommendToOthers.title"), vsqRaw.getRecommendToOthersCount().toString(), messages.getUnitTitle(UnitType.NUMBER)),
-                new ScoreReportRes(messages.get("ScoreReportRes.unfixedReturnedCheque.title"), messages.getHavingTitle(chqNegStatus)),
-                new ScoreReportRes(messages.get("ScoreReportRes.loansWithNegativeStatus.title"), messages.getHavingTitle(lnNegStatus))
-        );
-    }
-
-    @Override
     public ScoreStatusRes getScoreStatus(Long userId) {
         validateUserAccess(userId);
         ScoreStatusRaw raw = scoringEngineRepository.getScoreStatus(userId);
@@ -75,10 +55,32 @@ public class CreditStatusServiceImpl implements CreditStatusService {
     }
 
     @Override
-    public VosouqStatusRes getVosouqStatus(Long userId) {
+    public List<TripleRes> getVosouqStatus(Long userId) {
         validateUserAccess(userId);
-        VosouqStatusRaw raw = scoringEngineRepository.getVosouqStatus(userId);
-        return new VosouqStatusRes(raw.getMembershipDurationDay(), raw.getMembershipDurationMonth(), raw.getDoneTradesCount(), raw.getUndoneTradesCount(), raw.getNegativeStatusCount(), raw.getDelayDaysCountAvg(), raw.getRecommendToOthersCount());
+        VosouqStatusRaw vsqRaw = scoringEngineRepository.getVosouqStatus(userId);
+        boolean vsqNegStatus = vsqRaw.getNegativeStatusCount() > ZERO_INT;
+        return List.of(
+                new TripleRes(messages.get("TripleRes.membershipDuration.title"), vsqRaw.getMembershipDurationMonth().toString(), messages.getUnitTitle(UnitType.MONTH)),
+                new TripleRes(messages.get("TripleRes.doneTrades.title"), vsqRaw.getDoneTradesCount().toString(), messages.getUnitTitle(UnitType.NUMBER)),
+                new TripleRes(messages.get("TripleRes.undoneTrades.title"), vsqRaw.getUndoneTradesCount().toString(), messages.getUnitTitle(UnitType.NUMBER)),
+                new TripleRes(messages.get("TripleRes.negativeStatus.title"), messages.getHavingTitle(vsqNegStatus)),
+                new TripleRes(messages.get("TripleRes.delayAvg.title"), vsqRaw.getDelayDaysCountAvg().toString(), messages.getUnitTitle(UnitType.NUMBER)),
+                new TripleRes(messages.get("TripleRes.recommendToOthers.title"), vsqRaw.getRecommendToOthersCount().toString(), messages.getUnitTitle(UnitType.NUMBER))
+        );
+    }
+
+    @Override
+    public List<TripleRes> getScoreReport(Long userId) {
+        ChequesStatusRaw chqRaw = scoringEngineRepository.getChequesStatus(userId);
+        LoansStatusRaw lnRaw = scoringEngineRepository.getLoansStatus(userId);
+        boolean chqNegStatus = chqRaw.getUnfixedReturnedChequesTotalBalance() > ZERO_INT;
+        boolean lnNegStatus = lnRaw.getPastDueLoansAmount().add(lnRaw.getArrearsLoansAmount()).add(lnRaw.getSuspiciousLoansAmount()).compareTo(BigDecimal.ZERO) > ZERO_INT;
+        // get user's vosouqStatus items
+        List<TripleRes> resList = new ArrayList<>(getVosouqStatus(userId));
+        // add user's cheques and loans items
+        resList.add(new TripleRes(messages.get("TripleRes.unfixedReturnedCheque.title"), messages.getHavingTitle(chqNegStatus)));
+        resList.add(new TripleRes(messages.get("TripleRes.loansWithNegativeStatus.title"), messages.getHavingTitle(lnNegStatus)));
+        return resList;
     }
 
     @Override

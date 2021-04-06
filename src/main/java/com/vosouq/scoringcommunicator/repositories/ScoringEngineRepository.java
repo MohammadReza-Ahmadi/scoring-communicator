@@ -1,8 +1,6 @@
 package com.vosouq.scoringcommunicator.repositories;
 
 import com.vosouq.scoringcommunicator.controllers.dtos.raws.*;
-import com.vosouq.scoringcommunicator.controllers.dtos.res.*;
-import com.vosouq.scoringcommunicator.controllers.dtos.res.ScoreChangeRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

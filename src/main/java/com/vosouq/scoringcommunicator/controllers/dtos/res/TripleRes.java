@@ -7,7 +7,7 @@ import lombok.*;
 @RequiredArgsConstructor
 @Getter
 @Setter
-public class ScoreReportRes {
+public class TripleRes {
     @NonNull
     private String title;
     @NonNull

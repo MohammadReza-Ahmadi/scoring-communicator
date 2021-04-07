@@ -1,7 +1,6 @@
 package com.vosouq.scoringcommunicator.controllers;
 
 import com.vosouq.commons.annotation.VosouqRestController;
-import com.vosouq.scoringcommunicator.controllers.dtos.res.LoansStatusRes;
 import com.vosouq.scoringcommunicator.controllers.dtos.res.*;
 import com.vosouq.scoringcommunicator.services.CreditStatusService;
 import com.vosouq.scoringcommunicator.services.UserBusinessService;
@@ -46,7 +45,7 @@ public class CreditStatusController {
     }
 
     @GetMapping(value = {"/loans", "/loans/{userId}"})
-    public LoansStatusRes getLoansStatus(@PathVariable(required = false) Long userId) {
+    public List<TripleRes> getLoansStatus(@PathVariable(required = false) Long userId) {
         userId = userBusinessService.resolveUserId(userId);
         return creditStatusService.getLoansStatus(userId);
     }

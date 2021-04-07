@@ -1,6 +1,5 @@
 package com.vosouq.scoringcommunicator.services;
 
-import com.vosouq.scoringcommunicator.controllers.dtos.res.LoansStatusRes;
 import com.vosouq.scoringcommunicator.controllers.dtos.res.*;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -14,7 +13,7 @@ public interface CreditStatusService {
 
     List<TripleRes> getScoreReport(@PathVariable Long userId);
 
-    LoansStatusRes getLoansStatus(Long userId);
+    List<TripleRes> getLoansStatus(Long userId);
 
     List<ChequesStatusRes> getChequesStatus(Long userId);
 

@@ -84,10 +84,15 @@ public class CreditStatusServiceImpl implements CreditStatusService {
     }
 
     @Override
-    public LoansStatusRes getLoansStatus(Long userId) {
+    public List<TripleRes> getLoansStatus(Long userId) {
         validateUserAccess(userId);
-        LoansStatusRaw raw = scoringEngineRepository.getLoansStatus(userId);
-        return new LoansStatusRes(raw.getCurrentLoansCount(), raw.getPastDueLoansAmount(), raw.getArrearsLoansAmount(), raw.getSuspiciousLoansAmount());
+        LoansStatusRaw lnRaw = scoringEngineRepository.getLoansStatus(userId);
+        return List.of(
+                new TripleRes(messages.get("TripleRes.currentLoansCount.title"), lnRaw.getCurrentLoansCount().toString(), messages.getUnitTitle(UnitType.ITEM)),
+                new TripleRes(messages.get("TripleRes.pastDueLoansAmount.title"), lnRaw.getPastDueLoansAmount().toString(), messages.getUnitTitle(UnitType.RIAL)),
+                new TripleRes(messages.get("TripleRes.arrearsLoansAmount.title"), lnRaw.getArrearsLoansAmount().toString(), messages.getUnitTitle(UnitType.RIAL)),
+                new TripleRes(messages.get("TripleRes.suspiciousLoansAmount.title"), lnRaw.getSuspiciousLoansAmount().toString(), messages.getUnitTitle(UnitType.RIAL))
+        );
     }
 
     @Override

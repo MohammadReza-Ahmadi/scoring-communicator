@@ -25,17 +25,4 @@ public class ScoreGaugeRaw {
 
     @JsonProperty("risk_status")
     private String riskStatus;
-
-/*    data class ScoreRange(
-            @SerializedName("color")
-            val mColor: String?,
-            @SerializedName("end")
-            val mEnd: Int?,
-            @SerializedName("start")
-            val mStart: Int?,
-            @SerializedName("title")
-            val mTitle: String?,
-            @SerializedName("scoreChange")
-            val mScoreChange: Int?
-    )*/
 }

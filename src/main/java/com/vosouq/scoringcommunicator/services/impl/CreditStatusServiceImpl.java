@@ -163,6 +163,12 @@ public class CreditStatusServiceImpl implements CreditStatusService {
         return raws.stream().map(r -> new ScoreChangeRes(r.getChangeReason(), r.getChangeDate(), r.getScoreChange())).collect(Collectors.toList());
     }
 
+    @Override
+    public List<UserScoreRes> getUsersScores(List<Long> userIds) {
+        List<UserScoreRaw> raws = scoringEngineRepository.getUsersScores(userIds);
+        return raws.stream().map(r -> new UserScoreRes(r.getUserId(), r.getScore())).collect(Collectors.toList());
+    }
+
     private void validateUserAccess(Long userId) {
         if (userBusinessService.isNotOnlineUser(userId))
             validationService.validateUserAccess(userId);

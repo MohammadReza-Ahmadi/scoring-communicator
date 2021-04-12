@@ -4,6 +4,7 @@ import com.vosouq.scoringcommunicator.controllers.dtos.raws.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -39,4 +40,9 @@ public interface ScoringEngineRepository {
 
     @GetMapping(value = "/score-changes/{userId}")
     List<ScoreChangeRaw> getScoreChanges(@PathVariable(value = "userId") Long userId);
+
+    // this rest end-point is defined by post method in the FastApi side,
+    // because this version of feign client change end-points' method from Get to Post for those have RequestBody parameters.
+    @GetMapping(value = "/scores")
+    List<UserScoreRaw> getUsersScores(@RequestBody List<Long> userIds);
 }

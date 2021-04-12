@@ -6,6 +6,7 @@ import com.vosouq.scoringcommunicator.services.CreditStatusService;
 import com.vosouq.scoringcommunicator.services.UserBusinessService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -72,5 +73,10 @@ public class CreditStatusController {
     public List<ScoreChangeRes> getScoreChanges(@PathVariable(required = false) Long userId) {
         userId = userBusinessService.resolveUserId(userId);
         return creditStatusService.getScoreChanges(userId);
+    }
+
+    @GetMapping(value = "/scores")
+    public List<UserScoreRes> getUsersScores(@RequestBody List<Long> userIds) {
+        return creditStatusService.getUsersScores(userIds);
     }
 }

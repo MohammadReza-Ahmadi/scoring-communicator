@@ -22,4 +22,6 @@ public interface CreditStatusService {
     ScoreDetailsRes getScoreDetails(Long userId);
 
     List<ScoreChangeRes> getScoreChanges(Long userId);
+
+    List<UserScoreRes> getUsersScores(List<Long> userIds);
 }
